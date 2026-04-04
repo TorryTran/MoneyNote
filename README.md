@@ -44,14 +44,5 @@ cd /storage/emulated/0/Documents/MoneyNote
 APK release:
 `/storage/emulated/0/Documents/MoneyNote/app/build/outputs/apk/release/app-release.apk`
 
-## Ký ứng dụng (Release)
-Dự án đã cấu hình sẵn ký release bằng `keystore.properties`.
-
-- Keystore hiện dùng: `/sdcard/Documents/MoneyNote/release/torrytran-release.p12`
-- Alias: `torrytran`
-- Store type: `PKCS12`
-
-Bạn chỉ cần chạy `assembleRelease` là APK sẽ được ký tự động.
-
 ## Tác giả
 - GitHub: [@TorryTran](https://github.com/TorryTran)
