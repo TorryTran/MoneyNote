@@ -1,40 +1,57 @@
-# MoneyNote - So thu chi
+# MoneyNote
 
-Ung dung Android quan ly thu chi offline (SQLite), UI Material dark mode.
+Ứng dụng Android quản lý thu chi cá nhân, lưu dữ liệu offline bằng SQLite.
 
-## Chuc nang
-- Man hinh Nhap vao voi 2 tab: Chi tieu / Thu nhap
-- Date picker, ghi chu, so tien, danh muc dang grid
-- Luu giao dich offline vao SQLite (`transactions`)
-- Man hinh Lich thang:
-  - Tong thu (xanh) va tong chi (do) theo tung ngay
-  - Bam vao ngay de xem danh sach giao dich
-  - Tong ket thang: Thu nhap, Chi tieu, Tong con lai
-- Sua / xoa giao dich bang nhan giu item trong danh sach ngay
+## Tính năng chính
+- Nhập giao dịch theo 2 nhóm: `Chi tiêu` và `Thu nhập`
+- Quản lý ví tiền (tiền mặt, tài khoản, ví tự tạo)
+- Xem giao dịch theo lịch tháng/ngày
+- Sửa, xóa giao dịch trực tiếp từ tab Lịch
+- Xem tổng quan thu/chi theo tuần và tháng
+- Sao lưu/khôi phục dữ liệu bằng JSON
+- Hỗ trợ ngôn ngữ: Tiếng Việt / English
 
-## Cau truc chinh
+## Công nghệ
+- Kotlin
+- Android ViewBinding
+- SQLite (`SQLiteOpenHelper`)
+- Material Components
+
+## Cấu trúc chính
 - `MainActivity`
-- Fragments:
-  - `EntryHostFragment`
-  - `EntryFormFragment` (dung chung cho Thu/Chi)
-  - `CalendarFragment`
-  - `ReportFragment`
-- RecyclerView Adapters:
-  - `CategoryAdapter`
-  - `DayCellAdapter`
-  - `TransactionAdapter`
-- Database: `MoneyNoteDatabase` (SQLiteOpenHelper)
+- `EntryHostFragment`, `EntryFormFragment`
+- `CalendarFragment`
+- `ReportFragment`
+- `WalletFragment`
+- `SettingsFragment`
+- `MoneyNoteDatabase`, `TransactionRepository`
 
-## Build APK (AndroidIDE tren dien thoai)
+## Build bằng AndroidIDE
 ```bash
 cd /storage/emulated/0/Documents/MoneyNote
-./gradlew clean
 ./gradlew assembleDebug
 ```
+
 APK debug:
 `/storage/emulated/0/Documents/MoneyNote/app/build/outputs/apk/debug/app-debug.apk`
 
-## Build APK (Android Studio)
-1. Open project `MoneyNote`
-2. Sync Gradle
-3. Build > Build APK(s)
+Build release đã ký:
+```bash
+cd /storage/emulated/0/Documents/MoneyNote
+./gradlew :app:assembleRelease
+```
+
+APK release:
+`/storage/emulated/0/Documents/MoneyNote/app/build/outputs/apk/release/app-release.apk`
+
+## Ký ứng dụng (Release)
+Dự án đã cấu hình sẵn ký release bằng `keystore.properties`.
+
+- Keystore hiện dùng: `/sdcard/Documents/MoneyNote/release/torrytran-release.p12`
+- Alias: `torrytran`
+- Store type: `PKCS12`
+
+Bạn chỉ cần chạy `assembleRelease` là APK sẽ được ký tự động.
+
+## Tác giả
+- GitHub: [@TorryTran](https://github.com/TorryTran)
