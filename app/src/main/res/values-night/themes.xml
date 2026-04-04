@@ -1,0 +1,47 @@
+<resources>
+    <style name="Theme.MoneyNote" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent_blue</item>
+        <item name="colorPrimaryVariant">@color/accent_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/accent_blue</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MoneyNote.Dialog</item>
+        <item name="android:colorBackground">@color/bg_primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:statusBarColor">@color/bg_primary</item>
+        <item name="android:navigationBarColor">@color/bg_primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="ThemeOverlay.MoneyNote.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="alertDialogStyle">@style/Widget.MoneyNote.AlertDialog</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.MoneyNote.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.MoneyNote.DialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.MoneyNote.DialogButton</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="colorSurface">@color/dialog_surface</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MoneyNote.Dialog</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.MoneyNote.DialogBody</item>
+    </style>
+
+    <style name="Widget.MoneyNote.DialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/accent_blue</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Widget.MoneyNote.AlertDialog" parent="MaterialAlertDialog.MaterialComponents">
+        <item name="backgroundTint">@color/dialog_surface</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.MoneyNote.Dialog</item>
+    </style>
+
+    <style name="ShapeAppearance.MoneyNote.Dialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="TextAppearance.MoneyNote.DialogBody" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+</resources>

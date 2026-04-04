@@ -1,0 +1,173 @@
+<resources>
+    <string name="app_name">MoneyNote</string>
+    <string name="title_entry">Sổ thu chi MoneyNote</string>
+    <string name="tab_expense">Chi tiêu</string>
+    <string name="tab_income">Thu nhập</string>
+    <string name="label_date">Ngày</string>
+    <string name="label_wallet">Ví</string>
+    <string name="label_note">Ghi chú</string>
+    <string name="hint_note">Thêm ghi chú</string>
+    <string name="label_amount_expense">Tiền chi</string>
+    <string name="label_amount_income">Tiền thu</string>
+    <string name="hint_amount">Nhập số tiền</string>
+    <string name="currency_symbol">đ</string>
+    <string name="wallet_add_new">Thêm ví</string>
+    <string name="wallet_add_new_sub">Tạo loại ví mới</string>
+    <string name="wallet_dialog_add_title">Thêm ví</string>
+    <string name="wallet_dialog_name_hint">Tên ví mới</string>
+    <string name="wallet_dialog_balance_hint">Số dư ví</string>
+    <string name="wallet_missing">Vui lòng chọn ví</string>
+    <string name="wallet_insufficient_balance">Số dư ví không đủ để nhập khoản chi</string>
+    <string name="wallet_title">Ví</string>
+    <string name="wallet_default_cash">Tiền mặt</string>
+    <string name="wallet_default_account">Tài khoản</string>
+    <string name="wallet_manage_hint">Bấm vào ví để sửa số dư hoặc xóa ví.</string>
+    <string name="wallet_protected_delete">Không thể xóa ví mặc định</string>
+    <string name="wallet_delete_title">Xóa ví</string>
+    <string name="wallet_delete_message">Bạn muốn xóa ví này?</string>
+    <string name="label_category">Danh mục</string>
+    <string name="category_editor">Sửa danh mục</string>
+    <string name="category_other">Khác</string>
+    <string name="category_expense_debt_repayment">Trả nợ</string>
+    <string name="category_income_borrowing">Vay mượn</string>
+    <string name="category_wallet_update">Cập nhật ví tiền</string>
+    <string name="category_expense_food">Ăn uống</string>
+    <string name="category_expense_transport">Xăng xe</string>
+    <string name="category_expense_housing">Nhà cửa</string>
+    <string name="category_expense_medical">Y tế</string>
+    <string name="category_expense_entertainment">Vui chơi</string>
+    <string name="category_expense_shopping">Mua sắm</string>
+    <string name="category_income_salary">Tiền lương</string>
+    <string name="category_income_bonus">Tiền thưởng</string>
+    <string name="category_income_part_time">Làm thêm</string>
+    <string name="category_income_lucky_money">Lì xì</string>
+    <string name="category_income_investment">Đầu tư</string>
+    <string name="category_income_transfer">Chuyển khoản</string>
+    <string name="btn_add_expense">Nhập khoản Tiền chi</string>
+    <string name="btn_add_income">Nhập khoản Tiền thu</string>
+    <string name="nav_entry">Nhập vào</string>
+    <string name="nav_calendar">Lịch</string>
+    <string name="nav_report">Tổng quan</string>
+    <string name="nav_wallet">Ví</string>
+    <string name="nav_settings">Cài đặt</string>
+    <string name="calendar_title">Lịch</string>
+    <string name="summary_income">Thu nhập</string>
+    <string name="summary_expense">Chi tiêu</string>
+    <string name="summary_balance">Tổng</string>
+    <string name="report_weekly_chart">Biểu đồ thu/chi trong tuần</string>
+    <string name="report_month_label">Tháng %1$s</string>
+    <string name="report_week_label">Tuần: %1$s - %2$s</string>
+    <string name="report_week_income">Thu tuần: %1$s</string>
+    <string name="report_week_expense">Chi tuần: %1$s</string>
+    <string name="report_week_status_positive">Trạng thái tuần: Dương (Thu cao hơn Chi)</string>
+    <string name="report_week_status_negative">Trạng thái tuần: Âm (Chi cao hơn Thu)</string>
+    <string name="report_week_status_balanced">Trạng thái tuần: Cân bằng</string>
+    <string name="report_swipe_hint">Vuốt trái/phải để xem tuần khác</string>
+    <string name="report_hint_calendar_detail">Bấm vào tab Lịch để xem chi tiết theo ngày và chỉnh sửa giao dịch.</string>
+    <string name="calendar_weekday_header">Th 2      Th 3      Th 4      Th 5      Th 6      Th 7      CN</string>
+    <string name="week_short_mon">T2</string>
+    <string name="week_short_tue">T3</string>
+    <string name="week_short_wed">T4</string>
+    <string name="week_short_thu">T5</string>
+    <string name="week_short_fri">T6</string>
+    <string name="week_short_sat">T7</string>
+    <string name="week_short_sun">CN</string>
+    <string name="empty_transactions">Chưa có giao dịch</string>
+    <string name="transaction_meta">[%1$s]  %2$s</string>
+    <string name="transaction_note_with_meta">%1$s\n%2$s</string>
+    <string name="action_save">Lưu</string>
+    <string name="action_update">Cập nhật</string>
+    <string name="action_delete">Xóa</string>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_close">Đóng</string>
+    <string name="dialog_edit_title">Sửa giao dịch</string>
+    <string name="dialog_delete_title">Xóa giao dịch</string>
+    <string name="dialog_delete_message">Bạn chắc chắn muốn xóa giao dịch này?</string>
+    <string name="dialog_edit_categories_title">Sửa danh mục</string>
+    <string name="dialog_edit_categories_subtitle">Bạn có thể thêm, sửa, xóa danh mục.</string>
+    <string name="dialog_rename_title">Đổi tên danh mục</string>
+    <string name="dialog_rename_label">Tên danh mục mới</string>
+    <string name="dialog_rename_hint">Nhập tên danh mục</string>
+    <string name="dialog_add_category_title">Thêm danh mục</string>
+    <string name="dialog_add_category_hint">Nhập tên danh mục mới</string>
+    <string name="action_add_category">+ Thêm danh mục</string>
+    <string name="action_pick_icon">Chọn icon</string>
+    <string name="dialog_pick_icon_title">Chọn icon yêu thích</string>
+    <string name="dialog_delete_category_title">Xóa danh mục</string>
+    <string name="dialog_delete_category_message">Bạn muốn xóa danh mục này?</string>
+    <string name="category_minimum_error">Cần giữ lại ít nhất 1 danh mục.</string>
+    <string name="category_exists_error">Danh mục này đã tồn tại.</string>
+    <string name="dialog_field_type">Loại giao dịch</string>
+    <string name="dialog_field_amount">Số tiền</string>
+    <string name="dialog_field_category">Danh mục</string>
+    <string name="dialog_field_note">Ghi chú</string>
+    <string name="dialog_hint_amount">Nhập số tiền</string>
+    <string name="dialog_hint_category">Nhập danh mục</string>
+    <string name="dialog_hint_note">Nhập ghi chú</string>
+    <string name="choose_category">Vui lòng chọn danh mục</string>
+    <string name="invalid_amount">Số tiền không hợp lệ</string>
+    <string name="saved_success">Đã lưu giao dịch</string>
+    <string name="updated_success">Đã cập nhật giao dịch</string>
+    <string name="deleted_success">Đã xóa giao dịch</string>
+    <string name="file_io_title">Nhập/Xuất dữ liệu (bộ nhớ máy)</string>
+    <string name="file_io_hint">Xuất ra file JSON để lưu trữ. Nhập file sẽ ghi đè toàn bộ dữ liệu hiện tại.</string>
+    <string name="file_status_ready">Sẵn sàng</string>
+    <string name="file_export">Xuất file JSON</string>
+    <string name="file_import">Nhập file JSON</string>
+    <string name="file_export_ok">Đã xuất %1$d giao dịch</string>
+    <string name="file_import_ok">Đã nhập %1$d giao dịch</string>
+    <string name="default_backup_file_name">moneynote.json</string>
+    <string name="error_export_failed">Xuất file lỗi</string>
+    <string name="error_import_failed">Nhập file lỗi</string>
+    <string name="error_cannot_write_file">Không ghi được file</string>
+    <string name="error_cannot_read_file">Không đọc được file</string>
+    <string name="error_cannot_open_link">Không mở được liên kết</string>
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_data_title">Dữ liệu</string>
+    <string name="settings_danger_title">Nâng cao</string>
+    <string name="settings_language_title">Ngôn ngữ</string>
+    <string name="settings_language_hint">Đổi ngôn ngữ hiển thị cho toàn bộ ứng dụng. Thay đổi sẽ áp dụng ngay.</string>
+    <string name="settings_language_action">Chọn ngôn ngữ</string>
+    <string name="settings_language_current">Ngôn ngữ hiện tại: %1$s</string>
+    <string name="settings_theme_title">Chủ đề</string>
+    <string name="settings_theme_hint">Chọn giao diện màu cho toàn bộ ứng dụng.</string>
+    <string name="settings_theme_action">Chọn chủ đề</string>
+    <string name="settings_theme_current">Chủ đề hiện tại: %1$s</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_blue">Blue</string>
+    <string name="theme_pink">Hồng pastel (Hello Kitty)</string>
+    <string name="theme_yellow">Vàng pastel</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="language_english">English</string>
+    <string name="settings_app_info">MoneyNote v1.0 - lưu offline, tối ưu cho AndroidIDE.</string>
+    <string name="settings_status">Trạng thái thao tác: %1$s</string>
+    <string name="settings_clear_all">Xóa toàn bộ dữ liệu</string>
+    <string name="settings_clear_confirm_title">Xóa toàn bộ dữ liệu?</string>
+    <string name="settings_clear_confirm_message">Hành động này sẽ xóa tất cả giao dịch hiện tại và không thể hoàn tác.</string>
+    <string name="settings_clear_ok">Đã xóa toàn bộ giao dịch</string>
+    <string name="settings_about_title">Giới thiệu</string>
+    <string name="settings_developer_title">Nhà phát triển</string>
+    <string name="settings_about_text">MoneyNote là ứng dụng quản lý thu chi cá nhân tập trung vào tốc độ nhập liệu và sự rõ ràng.
+
+Ứng dụng lưu toàn bộ dữ liệu trực tiếp trên máy bằng SQLite, không phụ thuộc internet.
+
+Bạn có thể theo dõi theo ngày, theo tháng, quản lý nhiều ví, xem báo cáo tuần và chủ động sao lưu dữ liệu ra file JSON khi cần.</string>
+    <string name="settings_guide_title">Cách sử dụng</string>
+    <string name="settings_guide_text">1. Mở tab Nhập vào để thêm giao dịch Thu hoặc Chi, chọn đúng Ngày, Ví, Danh mục và số tiền.
+
+2. Mở tab Lịch để xem từng ngày trong tháng, nhấn vào ngày bất kỳ để xem chi tiết giao dịch.
+
+3. Nhấn giữ một giao dịch trong tab Lịch để sửa hoặc xóa giao dịch đó.
+
+4. Mở tab Tổng quan để theo dõi xu hướng Thu/Chi theo tuần và trạng thái cân bằng tài chính.
+
+5. Mở tab Ví để tạo nhiều ví, cập nhật số dư và quản lý từng nguồn tiền riêng biệt.
+
+6. Mở tab Cài đặt để Xuất/Nhập dữ liệu JSON và đổi ngôn ngữ hiển thị của ứng dụng.</string>
+    <string name="settings_author">Tác giả: @TorryTran\nGitHub: https://github.com/torrytran</string>
+    <string name="settings_open_telegram">Mở Telegram @TorryTran</string>
+    <string name="settings_open_github">Mở GitHub torrytran</string>
+    <string name="settings_telegram">Telegram</string>
+    <string name="settings_github">Github</string>
+    <string name="settings_support_momo">Ủng hộ qua MoMo</string>
+</resources>
