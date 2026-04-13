@@ -8,6 +8,8 @@ def keystorePropsFile = rootProject.file("keystore.properties")
 if (keystorePropsFile.exists()) {
     keystoreProps.load(new FileInputStream(keystorePropsFile))
 }
+def appVersionCode = (project.findProperty("APP_VERSION_CODE") ?: "1").toInteger()
+def appVersionName = (project.findProperty("APP_VERSION_NAME") ?: "1.0").toString()
 
 android {
     namespace 'com.moneynote.app'
@@ -17,14 +19,14 @@ android {
         applicationId "com.moneynote.app"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode appVersionCode
+        versionName appVersionName
     }
 
     signingConfigs {
         release {
             if (keystorePropsFile.exists()) {
-                storeFile file(keystoreProps['storeFile'])
+                storeFile rootProject.file(keystoreProps['storeFile'])
                 storePassword keystoreProps['storePassword']
                 keyAlias keystoreProps['keyAlias']
                 keyPassword keystoreProps['keyPassword']
@@ -34,6 +36,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
         release {
             minifyEnabled false
             signingConfig signingConfigs.release

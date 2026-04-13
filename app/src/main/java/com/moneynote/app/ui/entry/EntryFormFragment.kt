@@ -13,32 +13,38 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.moneynote.app.R
+import com.moneynote.app.data.DataChangeTracker
 import com.moneynote.app.data.TransactionEntity
 import com.moneynote.app.data.TransactionRepository
 import com.moneynote.app.data.TransactionType
 import com.moneynote.app.databinding.DialogEditCategoriesBinding
 import com.moneynote.app.databinding.DialogRenameCategoryBinding
 import com.moneynote.app.databinding.FragmentEntryFormBinding
-import com.moneynote.app.ui.common.AppCategories
+import com.moneynote.app.ui.TabRefreshable
 import com.moneynote.app.ui.common.DateUtils
+import com.moneynote.app.ui.common.styleAppDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.text.NumberFormat
 import java.util.Locale
 
-class EntryFormFragment : Fragment() {
+class EntryFormFragment : Fragment(), TabRefreshable {
     private var _binding: FragmentEntryFormBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var type: TransactionType
     private lateinit var repository: TransactionRepository
     private lateinit var walletStore: WalletStore
+    private lateinit var categoryStore: CategoryStore
     private var selectedDate: Long = System.currentTimeMillis()
     private var isFormattingAmount = false
     private lateinit var categories: MutableList<com.moneynote.app.ui.common.CategoryItem>
+    private lateinit var categoryAdapter: CategoryAdapter
     private var selectedCategoryName: String = ""
     private var selectedWalletName: String = "Tiền mặt"
+    private var lastWalletVersion = -1L
+    private var lastCategoryVersion = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,14 +65,13 @@ class EntryFormFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         repository = TransactionRepository.get(requireContext())
         walletStore = WalletStore(requireContext())
-        setupWalletSpinner()
+        categoryStore = CategoryStore(requireContext())
+        setupWalletSpinner(force = true)
 
-        categories = if (type == TransactionType.EXPENSE) AppCategories.expenseDefault() else AppCategories.incomeDefault()
-        selectedCategoryName = categories.firstOrNull { !it.isEditor }?.name.orEmpty()
-        lateinit var adapter: CategoryAdapter
-        adapter = CategoryAdapter(categories) { item, position ->
+        categories = mutableListOf()
+        categoryAdapter = CategoryAdapter(categories) { item, _ ->
             if (item.isEditor) {
-                showEditCategoriesDialog(adapter)
+                showEditCategoriesDialog()
                 false
             } else {
                 selectedCategoryName = item.name
@@ -74,8 +79,9 @@ class EntryFormFragment : Fragment() {
             }
         }
         binding.rvCategories.layoutManager = GridLayoutManager(requireContext(), 4)
-        binding.rvCategories.adapter = adapter
+        binding.rvCategories.adapter = categoryAdapter
         binding.rvCategories.setHasFixedSize(true)
+        setupCategories(force = true)
 
         binding.tvAmountLabel.text =
             if (type == TransactionType.EXPENSE) getString(R.string.label_amount_expense) else getString(R.string.label_amount_income)
@@ -166,11 +172,32 @@ class EntryFormFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (_binding != null) {
+            syncSelectedDateToToday()
             setupWalletSpinner()
+            setupCategories()
         }
     }
 
-    private fun setupWalletSpinner() {
+    override fun refreshTab() {
+        if (_binding != null) {
+            setupWalletSpinner()
+            setupCategories()
+        }
+    }
+
+    private fun syncSelectedDateToToday() {
+        val today = System.currentTimeMillis()
+        val currentDayStart = DateUtils.dayBounds(selectedDate).first
+        val todayStart = DateUtils.dayBounds(today).first
+        if (currentDayStart != todayStart) {
+            selectedDate = today
+            renderDate()
+        }
+    }
+
+    private fun setupWalletSpinner(force: Boolean = false) {
+        val currentVersion = DataChangeTracker.currentWalletsVersion()
+        if (!force && currentVersion == lastWalletVersion) return
         val wallets = walletStore.load()
         if (wallets.isEmpty()) {
             Toast.makeText(requireContext(), getString(R.string.wallet_missing), Toast.LENGTH_SHORT).show()
@@ -196,6 +223,25 @@ class EntryFormFragment : Fragment() {
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) = Unit
         }
+        lastWalletVersion = currentVersion
+    }
+
+    private fun setupCategories(force: Boolean = false) {
+        val currentVersion = DataChangeTracker.currentCategoriesVersion()
+        if (!force && currentVersion == lastCategoryVersion && categories.isNotEmpty()) return
+
+        val loaded = categoryStore.load(type)
+        val previousSelection = selectedCategoryName
+        categories.clear()
+        categories.addAll(loaded)
+        if (categories.none { !it.isEditor && it.name == previousSelection }) {
+            selectedCategoryName = categories.firstOrNull { !it.isEditor }?.name.orEmpty()
+        } else {
+            selectedCategoryName = previousSelection
+        }
+        categoryAdapter.notifyDataSetChanged()
+        categoryAdapter.setSelectedByName(selectedCategoryName)
+        lastCategoryVersion = currentVersion
     }
 
     private fun pickDate() {
@@ -220,13 +266,13 @@ class EntryFormFragment : Fragment() {
         binding.tvDate.text = DateUtils.formatDate(selectedDate)
     }
 
-    private fun showEditCategoriesDialog(adapter: CategoryAdapter) {
+    private fun showEditCategoriesDialog() {
         val editable = categories.withIndex().filter { !it.value.isEditor }
         if (editable.isEmpty()) return
 
         val dialogBinding = DialogEditCategoriesBinding.inflate(layoutInflater)
         val manageAdapter = CategoryManageAdapter(editable) { pair ->
-            showRenameDialog(pair.index, pair.value.name, adapter) {
+            showRenameDialog(pair.index, pair.value.name) {
                 dialogBinding.rvCategoryManage.adapter?.notifyDataSetChanged()
             }
         }
@@ -239,12 +285,12 @@ class EntryFormFragment : Fragment() {
         dialogBinding.btnClose.setOnClickListener { dialog.dismiss() }
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel)
+        styleAppDialog(dialog, requireContext())
     }
 
     private fun showRenameDialog(
         index: Int,
         oldName: String,
-        adapter: CategoryAdapter,
         onUpdated: () -> Unit
     ) {
         val renameBinding = DialogRenameCategoryBinding.inflate(layoutInflater)
@@ -258,16 +304,20 @@ class EntryFormFragment : Fragment() {
                 val newName = renameBinding.etCategoryName.text?.toString()?.trim().orEmpty()
                 if (newName.isNotBlank()) {
                     categories[index].name = newName
+                    categoryStore.save(type, categories)
                     if (selectedCategoryName == oldName) {
                         selectedCategoryName = newName
                     }
-                    adapter.refreshItem(index)
+                    categoryAdapter.refreshItem(index)
                     onUpdated()
                 }
             }
             .setNegativeButton(getString(R.string.action_cancel), null)
             .show()
-            .also { it.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel) }
+            .also {
+                it.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel)
+                styleAppDialog(it, requireContext())
+            }
     }
 
     override fun onDestroyView() {

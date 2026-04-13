@@ -18,6 +18,7 @@ import com.moneynote.app.data.TransactionRepository
 import com.moneynote.app.data.TransactionType
 import com.moneynote.app.databinding.FragmentSettingsBinding
 import com.moneynote.app.ui.common.CategoryItem
+import com.moneynote.app.ui.common.styleAppDialog
 import com.moneynote.app.ui.entry.CategoryStore
 import com.moneynote.app.ui.entry.WalletItem
 import com.moneynote.app.ui.entry.WalletStore
@@ -76,11 +77,7 @@ class SettingsFragment : Fragment(), TabRefreshable {
                 }
                 val backup = decodeBackup(text)
                 repository.replaceAll(backup.transactions)
-                if (backup.wallets != null) {
-                    walletStore.save(backup.wallets)
-                } else {
-                    walletStore.recalculateFromTransactions(backup.transactions)
-                }
+                walletStore.save(rebuildWallets(backup.transactions, backup.wallets))
                 backup.expenseCategories?.let { categoryStore.save(TransactionType.EXPENSE, it) }
                 backup.incomeCategories?.let { categoryStore.save(TransactionType.INCOME, it) }
                 backup.languageTag?.let { tag ->
@@ -152,7 +149,10 @@ class SettingsFragment : Fragment(), TabRefreshable {
             }
             .setNegativeButton(getString(R.string.action_cancel), null)
             .show()
-            .also { it.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel) }
+            .also {
+                it.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel)
+                styleAppDialog(it, requireContext())
+            }
     }
 
     private fun updateLanguageLabel() {
@@ -180,6 +180,49 @@ class SettingsFragment : Fragment(), TabRefreshable {
         }
     }
 
+    private fun rebuildWallets(
+        transactions: List<TransactionEntity>,
+        backupWallets: List<WalletItem>?
+    ): List<WalletItem> {
+        val orderedNames = linkedSetOf<String>()
+        backupWallets.orEmpty()
+            .map { it.name.trim() }
+            .filter { it.isNotEmpty() }
+            .forEach(orderedNames::add)
+        transactions
+            .map { it.wallet.trim() }
+            .filter { it.isNotEmpty() }
+            .forEach(orderedNames::add)
+        transactions
+            .map { it.transferToWallet.trim() }
+            .filter { it.isNotEmpty() }
+            .forEach(orderedNames::add)
+
+        if (orderedNames.isEmpty()) {
+            return walletStore.load()
+        }
+
+        val balances = orderedNames.associateWith { 0L }.toMutableMap()
+        transactions.forEach { tx ->
+            val walletName = tx.wallet.trim()
+            if (walletName.isEmpty()) return@forEach
+            if (tx.isTransfer) {
+                balances[walletName] = (balances[walletName] ?: 0L) - tx.amount
+                val targetWallet = tx.transferToWallet.trim()
+                if (targetWallet.isNotEmpty()) {
+                    if (!balances.containsKey(targetWallet)) {
+                        balances[targetWallet] = 0L
+                    }
+                    balances[targetWallet] = (balances[targetWallet] ?: 0L) + tx.amount
+                }
+            } else {
+                val delta = if (tx.type == TransactionType.INCOME) tx.amount else -tx.amount
+                balances[walletName] = (balances[walletName] ?: 0L) + delta
+            }
+        }
+        return orderedNames.map { WalletItem(it, balances[it] ?: 0L) }
+    }
+
     private fun encodeBackup(
         transactions: List<TransactionEntity>,
         wallets: List<WalletItem>,
@@ -194,6 +237,8 @@ class SettingsFragment : Fragment(), TabRefreshable {
                     put("type", tx.type.name)
                     put("amount", tx.amount)
                     put("wallet", tx.wallet)
+                    put("transferToWallet", tx.transferToWallet)
+                    put("isTransfer", tx.isTransfer)
                     put("category", tx.category)
                     put("note", tx.note)
                     put("date", tx.date)
@@ -226,7 +271,7 @@ class SettingsFragment : Fragment(), TabRefreshable {
         }
 
         val root = JSONObject().apply {
-            put("version", 2)
+            put("version", 3)
             put("transactions", txArray)
             put("wallets", walletArray)
             put(
@@ -258,6 +303,8 @@ class SettingsFragment : Fragment(), TabRefreshable {
                         type = TransactionType.valueOf(obj.getString("type")),
                         amount = obj.getLong("amount"),
                         wallet = obj.optString("wallet", getString(R.string.wallet_default_cash)),
+                        transferToWallet = obj.optString("transferToWallet", ""),
+                        isTransfer = obj.optBoolean("isTransfer", false),
                         category = obj.getString("category"),
                         note = obj.optString("note", ""),
                         date = obj.getLong("date")

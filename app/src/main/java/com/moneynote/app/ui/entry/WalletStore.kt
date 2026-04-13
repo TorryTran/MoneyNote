@@ -1,6 +1,8 @@
 package com.moneynote.app.ui.entry
 
 import android.content.Context
+import com.moneynote.app.data.DataChangeTracker
+import com.moneynote.app.data.MoneyNoteDatabase
 import com.moneynote.app.data.TransactionEntity
 import com.moneynote.app.data.TransactionType
 import org.json.JSONArray
@@ -8,54 +10,38 @@ import org.json.JSONObject
 
 class WalletStore(context: Context) {
     private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private val db = MoneyNoteDatabase.getInstance(context)
+    private var legacyMigrated = false
 
     fun load(): MutableList<WalletItem> {
-        val raw = prefs.getString(KEY_WALLETS, null) ?: return defaultWallets()
-        return try {
-            val arr = JSONArray(raw)
-            val list = mutableListOf<WalletItem>()
-            for (i in 0 until arr.length()) {
-                val obj = arr.getJSONObject(i)
-                list.add(
-                    WalletItem(
-                        name = obj.getString("name"),
-                        balance = obj.getLong("balance")
-                    )
-                )
-            }
-            if (list.isEmpty()) defaultWallets() else list
-        } catch (_: Exception) {
-            defaultWallets()
+        migrateLegacyPrefsIfNeeded()
+        val list = db.getAllWallets()
+        if (list.isEmpty()) {
+            val defaults = defaultWallets()
+            db.replaceWallets(defaults)
+            return defaults
         }
+        return list
     }
 
     fun save(items: List<WalletItem>) {
-        val arr = JSONArray()
-        items.forEach {
-            arr.put(
-                JSONObject().apply {
-                    put("name", it.name)
-                    put("balance", it.balance)
-                }
-            )
-        }
-        prefs.edit().putString(KEY_WALLETS, arr.toString()).apply()
+        db.replaceWallets(items)
+        DataChangeTracker.bumpWallets()
     }
 
     fun ensureWalletExists(name: String) {
         if (name.isBlank()) return
         val items = load()
         if (items.none { it.name == name }) {
-            items.add(WalletItem(name, 0L))
-            save(items)
+            db.upsertWallet(WalletItem(name, 0L))
+            DataChangeTracker.bumpWallets()
         }
     }
 
     fun removeWallet(name: String) {
         if (name.isBlank() || isProtectedWallet(name)) return
-        val items = load()
-        val next = items.filterNot { it.name == name }
-        save(next)
+        db.deleteWallet(name)
+        DataChangeTracker.bumpWallets()
     }
 
     fun isProtectedWallet(name: String): Boolean {
@@ -67,11 +53,12 @@ class WalletStore(context: Context) {
         val items = load()
         val index = items.indexOfFirst { it.name == name }
         if (index == -1) {
-            items.add(WalletItem(name, delta))
+            db.upsertWallet(WalletItem(name, delta))
         } else {
             items[index].balance += delta
+            db.upsertWallet(items[index])
         }
-        save(items)
+        DataChangeTracker.bumpWallets()
     }
 
     fun recalculateFromTransactions(transactions: List<TransactionEntity>) {
@@ -82,8 +69,19 @@ class WalletStore(context: Context) {
             if (!map.containsKey(tx.wallet)) {
                 map[tx.wallet] = 0L
             }
-            val delta = if (tx.type == TransactionType.INCOME) tx.amount else -tx.amount
-            map[tx.wallet] = (map[tx.wallet] ?: 0L) + delta
+            if (tx.isTransfer) {
+                map[tx.wallet] = (map[tx.wallet] ?: 0L) - tx.amount
+                val target = tx.transferToWallet.trim()
+                if (target.isNotEmpty()) {
+                    if (!map.containsKey(target)) {
+                        map[target] = 0L
+                    }
+                    map[target] = (map[target] ?: 0L) + tx.amount
+                }
+            } else {
+                val delta = if (tx.type == TransactionType.INCOME) tx.amount else -tx.amount
+                map[tx.wallet] = (map[tx.wallet] ?: 0L) + delta
+            }
         }
         val next = map.map { WalletItem(it.key, it.value) }
         save(next)
@@ -94,6 +92,33 @@ class WalletStore(context: Context) {
             WalletItem(DEFAULT_CASH, 0L),
             WalletItem(DEFAULT_ACCOUNT, 0L)
         )
+    }
+
+    private fun migrateLegacyPrefsIfNeeded() {
+        if (legacyMigrated) return
+        legacyMigrated = true
+        if (db.getAllWallets().isNotEmpty()) return
+
+        val raw = prefs.getString(KEY_WALLETS, null)
+        val migrated = if (raw.isNullOrBlank()) {
+            defaultWallets()
+        } else {
+            try {
+                val arr = JSONArray(raw)
+                val list = mutableListOf<WalletItem>()
+                for (i in 0 until arr.length()) {
+                    val obj = arr.getJSONObject(i)
+                    list += WalletItem(
+                        name = obj.getString("name"),
+                        balance = obj.getLong("balance")
+                    )
+                }
+                if (list.isEmpty()) defaultWallets() else list
+            } catch (_: Exception) {
+                defaultWallets()
+            }
+        }
+        db.replaceWallets(migrated)
     }
 
     companion object {

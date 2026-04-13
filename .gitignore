@@ -2,6 +2,7 @@
 .gradle/
 build/
 **/build/
+tmp/
 captures/
 .externalNativeBuild/
 .cxx/

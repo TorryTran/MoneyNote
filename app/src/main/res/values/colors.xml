@@ -12,5 +12,6 @@
     <color name="expense_red">#FF6C7B</color>
     <color name="divider_dark">#2D5A8D</color>
     <color name="category_selected">#225289</color>
+    <color name="chart_empty_gray">#74839E</color>
     <color name="white">#FFFFFF</color>
 </resources>

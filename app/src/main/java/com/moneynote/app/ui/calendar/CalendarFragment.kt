@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.moneynote.app.R
+import com.moneynote.app.data.DataChangeTracker
 import com.moneynote.app.data.TransactionEntity
 import com.moneynote.app.data.TransactionRepository
 import com.moneynote.app.data.TransactionType
@@ -23,6 +24,7 @@ import com.moneynote.app.databinding.FragmentCalendarBinding
 import com.moneynote.app.ui.TabRefreshable
 import com.moneynote.app.ui.common.DateUtils
 import com.moneynote.app.ui.common.MoneyFormat
+import com.moneynote.app.ui.common.styleAppDialog
 import com.moneynote.app.ui.common.vibrateWarning
 import com.moneynote.app.ui.entry.WalletStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -45,6 +47,7 @@ class CalendarFragment : Fragment(), TabRefreshable {
     private var monthDate = System.currentTimeMillis()
     private var selectedDayDate = System.currentTimeMillis()
     private var loadDayJob: Job? = null
+    private var lastTransactionsVersion = -1L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,35 +80,25 @@ class CalendarFragment : Fragment(), TabRefreshable {
         binding.btnPrevMonth.setOnClickListener {
             monthDate = DateUtils.shiftMonth(monthDate, -1)
             selectedDayDate = monthDate
-            refreshMonthAndDay()
+            refreshMonthAndDay(force = true)
         }
         binding.btnNextMonth.setOnClickListener {
             monthDate = DateUtils.shiftMonth(monthDate, 1)
             selectedDayDate = monthDate
-            refreshMonthAndDay()
+            refreshMonthAndDay(force = true)
         }
         binding.btnPickMonth.setOnClickListener { pickMonth() }
 
-        refreshMonthAndDay()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (!isHidden) refreshMonthAndDay()
+        refreshMonthAndDay(force = true)
     }
 
     override fun refreshTab() {
         if (_binding != null) refreshMonthAndDay()
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden && _binding != null) {
-            refreshMonthAndDay()
-        }
-    }
-
-    private fun refreshMonthAndDay() {
+    private fun refreshMonthAndDay(force: Boolean = false) {
+        val currentVersion = DataChangeTracker.currentTransactionsVersion()
+        if (!force && currentVersion == lastTransactionsVersion) return
         val selectedDay = DateUtils.dayOfMonth(selectedDayDate)
         binding.tvMonth.text = DateUtils.formatMonth(monthDate)
         viewLifecycleOwner.lifecycleScope.launch {
@@ -113,11 +106,12 @@ class CalendarFragment : Fragment(), TabRefreshable {
             val ui = _binding ?: return@launch
             dayAdapter.submit(uiData.grid, uiData.daySummaryMap, selectedDay)
 
-            ui.tvIncomeSummary.text = getString(R.string.summary_income) + "\n" + MoneyFormat.format(requireContext(), uiData.incomeTotal)
-            ui.tvExpenseSummary.text = getString(R.string.summary_expense) + "\n" + MoneyFormat.format(requireContext(), uiData.expenseTotal)
-            ui.tvBalanceSummary.text = getString(R.string.summary_balance) + "\n" + MoneyFormat.format(requireContext(), uiData.incomeTotal - uiData.expenseTotal)
+            ui.tvIncomeSummary.text = getString(R.string.summary_income) + "\n" + MoneyFormat.format(uiData.incomeTotal)
+            ui.tvExpenseSummary.text = getString(R.string.summary_expense) + "\n" + MoneyFormat.format(uiData.expenseTotal)
+            ui.tvBalanceSummary.text = getString(R.string.summary_balance) + "\n" + MoneyFormat.format(uiData.incomeTotal - uiData.expenseTotal)
 
             renderSelectedDay()
+            lastTransactionsVersion = currentVersion
         }
     }
 
@@ -171,7 +165,7 @@ class CalendarFragment : Fragment(), TabRefreshable {
                 cal.set(Calendar.DAY_OF_MONTH, 1)
                 monthDate = cal.timeInMillis
                 selectedDayDate = monthDate
-                refreshMonthAndDay()
+                refreshMonthAndDay(force = true)
             },
             cal.get(Calendar.YEAR),
             cal.get(Calendar.MONTH),
@@ -181,6 +175,10 @@ class CalendarFragment : Fragment(), TabRefreshable {
     }
 
     private fun showEditDeleteDialog(tx: TransactionEntity) {
+        if (tx.isTransfer) {
+            showTransferHistoryDialog(tx)
+            return
+        }
         val editBinding = DialogEditTransactionBinding.inflate(layoutInflater)
         val types = listOf(getString(R.string.tab_income), getString(R.string.tab_expense))
         val typeAdapter = ArrayAdapter(requireContext(), R.layout.item_spinner_selected, types).apply {
@@ -229,6 +227,36 @@ class CalendarFragment : Fragment(), TabRefreshable {
             .show()
         dialog.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel)
         styleActionButtons(dialog)
+        styleAppDialog(dialog, requireContext())
+    }
+
+    private fun showTransferHistoryDialog(tx: TransactionEntity) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.transfer_history_title))
+            .setMessage(
+                getString(
+                    R.string.transfer_history_message,
+                    tx.wallet,
+                    tx.transferToWallet,
+                    MoneyFormat.format(tx.amount)
+                )
+            )
+            .setPositiveButton(getString(R.string.action_delete)) { _, _ ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repository.delete(tx.id)
+                    walletStore.adjustBalance(tx.wallet, tx.amount)
+                    if (tx.transferToWallet.isNotBlank()) {
+                        walletStore.adjustBalance(tx.transferToWallet, -tx.amount)
+                    }
+                    refreshMonthAndDay()
+                }
+            }
+            .setNegativeButton(getString(R.string.action_cancel), null)
+            .show()
+            .also {
+                it.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel)
+                styleAppDialog(it, requireContext())
+            }
     }
 
     private fun showDeleteDialog(tx: TransactionEntity) {
@@ -245,7 +273,10 @@ class CalendarFragment : Fragment(), TabRefreshable {
             }
             .setNegativeButton(getString(R.string.action_cancel), null)
             .show()
-            .also { it.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel) }
+            .also {
+                it.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_panel)
+                styleAppDialog(it, requireContext())
+            }
     }
 
     private fun styleActionButtons(dialog: AlertDialog) {

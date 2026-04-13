@@ -4,9 +4,12 @@ import java.text.NumberFormat
 import java.util.Locale
 
 object MoneyFormat {
-    private val formatter = NumberFormat.getInstance(Locale("vi", "VN"))
+    private val formatter = ThreadLocal.withInitial {
+        NumberFormat.getInstance(Locale("vi", "VN"))
+    }
 
     fun format(value: Long): String {
-        return formatter.format(value) + "đ"
+        val numberFormat = requireNotNull(formatter.get())
+        return numberFormat.format(value) + "đ"
     }
 }

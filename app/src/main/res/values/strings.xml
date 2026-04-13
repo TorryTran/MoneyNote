@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">MoneyNote</string>
-    <string name="title_entry">Sổ thu chi MoneyNote</string>
+    <string name="title_entry">Báo cáo</string>
     <string name="tab_expense">Chi tiêu</string>
     <string name="tab_income">Thu nhập</string>
     <string name="label_date">Ngày</string>
@@ -21,7 +21,6 @@
     <string name="wallet_title">Ví</string>
     <string name="wallet_default_cash">Tiền mặt</string>
     <string name="wallet_default_account">Tài khoản</string>
-    <string name="wallet_manage_hint">Bấm vào ví để sửa số dư hoặc xóa ví.</string>
     <string name="wallet_protected_delete">Không thể xóa ví mặc định</string>
     <string name="wallet_delete_title">Xóa ví</string>
     <string name="wallet_delete_message">Bạn muốn xóa ví này?</string>
@@ -45,25 +44,42 @@
     <string name="category_income_transfer">Chuyển khoản</string>
     <string name="btn_add_expense">Nhập khoản Tiền chi</string>
     <string name="btn_add_income">Nhập khoản Tiền thu</string>
-    <string name="nav_entry">Nhập vào</string>
+    <string name="nav_entry">Báo cáo</string>
+    <string name="tab_transfer">Ví tiền</string>
+    <string name="transfer_from_wallet">Từ ví</string>
+    <string name="transfer_to_wallet">Sang ví</string>
+    <string name="transfer_amount">Số tiền</string>
+    <string name="btn_transfer">Chuyển khoản</string>
+    <string name="transfer_same_wallet_error">Ví chuyển và ví nhận không được trùng nhau</string>
+    <string name="transfer_success">Đã chuyển %1$sđ từ %2$s sang %3$s</string>
+    <string name="transfer_need_two_wallets">Cần ít nhất 2 ví để thực hiện chuyển khoản</string>
+    <string name="transfer_category_internal">Chuyển khoản nội bộ</string>
+    <string name="transfer_history_title">Chuyển khoản</string>
+    <string name="transfer_history_message">Từ %1$s sang %2$s\nSố tiền: %3$s</string>
     <string name="nav_calendar">Lịch</string>
     <string name="nav_report">Tổng quan</string>
-    <string name="nav_wallet">Ví</string>
+    <string name="nav_wallet">Ghi chú</string>
     <string name="nav_settings">Cài đặt</string>
     <string name="calendar_title">Lịch</string>
     <string name="summary_income">Thu nhập</string>
     <string name="summary_expense">Chi tiêu</string>
     <string name="summary_balance">Tổng</string>
     <string name="report_weekly_chart">Biểu đồ thu/chi trong tuần</string>
-    <string name="report_month_label">Tháng %1$s</string>
     <string name="report_week_label">Tuần: %1$s - %2$s</string>
     <string name="report_week_income">Thu tuần: %1$s</string>
     <string name="report_week_expense">Chi tuần: %1$s</string>
     <string name="report_week_status_positive">Trạng thái tuần: Dương (Thu cao hơn Chi)</string>
     <string name="report_week_status_negative">Trạng thái tuần: Âm (Chi cao hơn Thu)</string>
     <string name="report_week_status_balanced">Trạng thái tuần: Cân bằng</string>
-    <string name="report_swipe_hint">Vuốt trái/phải để xem tuần khác</string>
-    <string name="report_hint_calendar_detail">Bấm vào tab Lịch để xem chi tiết theo ngày và chỉnh sửa giao dịch.</string>
+    <string name="report_category_breakdown_title">Tỷ trọng danh mục trong tuần</string>
+    <string name="report_category_period">Thống kê theo tuần %1$s - %2$s</string>
+    <string name="report_category_empty">Chưa có dữ liệu để thống kê danh mục trong tuần này.</string>
+    <string name="report_expense_pie_title">Chi tiêu</string>
+    <string name="report_income_pie_title">Thu nhập</string>
+    <string name="report_category_other">Khác</string>
+    <string name="report_tab_weekly">Theo tuần</string>
+    <string name="report_tab_category">Theo danh mục</string>
+    <string name="report_category_legend_empty">Chưa có giao dịch</string>
     <string name="calendar_weekday_header">Th 2      Th 3      Th 4      Th 5      Th 6      Th 7      CN</string>
     <string name="week_short_mon">T2</string>
     <string name="week_short_tue">T3</string>
@@ -109,7 +125,6 @@
     <string name="saved_success">Đã lưu giao dịch</string>
     <string name="updated_success">Đã cập nhật giao dịch</string>
     <string name="deleted_success">Đã xóa giao dịch</string>
-    <string name="file_io_title">Nhập/Xuất dữ liệu (bộ nhớ máy)</string>
     <string name="file_io_hint">Xuất ra file JSON để lưu trữ. Nhập file sẽ ghi đè toàn bộ dữ liệu hiện tại.</string>
     <string name="file_status_ready">Sẵn sàng</string>
     <string name="file_export">Xuất file JSON</string>
@@ -124,50 +139,38 @@
     <string name="error_cannot_open_link">Không mở được liên kết</string>
     <string name="settings_title">Cài đặt</string>
     <string name="settings_data_title">Dữ liệu</string>
-    <string name="settings_danger_title">Nâng cao</string>
     <string name="settings_language_title">Ngôn ngữ</string>
     <string name="settings_language_hint">Đổi ngôn ngữ hiển thị cho toàn bộ ứng dụng. Thay đổi sẽ áp dụng ngay.</string>
     <string name="settings_language_action">Chọn ngôn ngữ</string>
     <string name="settings_language_current">Ngôn ngữ hiện tại: %1$s</string>
-    <string name="settings_theme_title">Chủ đề</string>
-    <string name="settings_theme_hint">Chọn giao diện màu cho toàn bộ ứng dụng.</string>
-    <string name="settings_theme_action">Chọn chủ đề</string>
-    <string name="settings_theme_current">Chủ đề hiện tại: %1$s</string>
-    <string name="theme_dark">Dark</string>
-    <string name="theme_blue">Blue</string>
-    <string name="theme_pink">Hồng pastel (Hello Kitty)</string>
-    <string name="theme_yellow">Vàng pastel</string>
     <string name="language_vietnamese">Tiếng Việt</string>
     <string name="language_english">English</string>
-    <string name="settings_app_info">MoneyNote v1.0 - lưu offline, tối ưu cho AndroidIDE.</string>
     <string name="settings_status">Trạng thái thao tác: %1$s</string>
-    <string name="settings_clear_all">Xóa toàn bộ dữ liệu</string>
-    <string name="settings_clear_confirm_title">Xóa toàn bộ dữ liệu?</string>
-    <string name="settings_clear_confirm_message">Hành động này sẽ xóa tất cả giao dịch hiện tại và không thể hoàn tác.</string>
-    <string name="settings_clear_ok">Đã xóa toàn bộ giao dịch</string>
-    <string name="settings_about_title">Giới thiệu</string>
     <string name="settings_developer_title">Nhà phát triển</string>
-    <string name="settings_about_text">MoneyNote là ứng dụng quản lý thu chi cá nhân tập trung vào tốc độ nhập liệu và sự rõ ràng.
-
-Ứng dụng lưu toàn bộ dữ liệu trực tiếp trên máy bằng SQLite, không phụ thuộc internet.
-
-Bạn có thể theo dõi theo ngày, theo tháng, quản lý nhiều ví, xem báo cáo tuần và chủ động sao lưu dữ liệu ra file JSON khi cần.</string>
-    <string name="settings_guide_title">Cách sử dụng</string>
-    <string name="settings_guide_text">1. Mở tab Nhập vào để thêm giao dịch Thu hoặc Chi, chọn đúng Ngày, Ví, Danh mục và số tiền.
-
-2. Mở tab Lịch để xem từng ngày trong tháng, nhấn vào ngày bất kỳ để xem chi tiết giao dịch.
-
-3. Nhấn giữ một giao dịch trong tab Lịch để sửa hoặc xóa giao dịch đó.
-
-4. Mở tab Tổng quan để theo dõi xu hướng Thu/Chi theo tuần và trạng thái cân bằng tài chính.
-
-5. Mở tab Ví để tạo nhiều ví, cập nhật số dư và quản lý từng nguồn tiền riêng biệt.
-
-6. Mở tab Cài đặt để Xuất/Nhập dữ liệu JSON và đổi ngôn ngữ hiển thị của ứng dụng.</string>
     <string name="settings_author">Tác giả: @TorryTran\nGitHub: https://github.com/torrytran</string>
-    <string name="settings_open_telegram">Mở Telegram @TorryTran</string>
-    <string name="settings_open_github">Mở GitHub torrytran</string>
     <string name="settings_telegram">Telegram</string>
     <string name="settings_github">Github</string>
     <string name="settings_support_momo">Ủng hộ qua MoMo</string>
+    <string name="notes_title">Ghi chú</string>
+    <string name="notes_hint">Không gian ghi chép cá nhân. Nội dung sẽ được lưu tự động trên máy.</string>
+    <string name="notes_placeholder">Viết ghi chú của bạn tại đây...</string>
+    <string name="notes_add">Thêm ghi chú</string>
+    <string name="notes_empty_state">Chưa có ghi chú nào. Bấm nút + để tạo ghi chú mới.</string>
+    <string name="notes_editor_title">Soạn ghi chú</string>
+    <string name="notes_title_hint">Tiêu đề ghi chú</string>
+    <string name="notes_empty_error">Vui lòng nhập tiêu đề hoặc nội dung ghi chú</string>
+    <string name="notes_untitled">Ghi chú không tiêu đề</string>
+    <string name="update_available_title">Có bản cập nhật mới</string>
+    <string name="update_available_message">MoneyNote %1$s đã sẵn sàng cập nhật.\nPhiên bản hiện tại của bạn là %2$s.</string>
+    <string name="update_download_action">Cập nhật</string>
+    <string name="update_open_release_page">Mở trang phát hành</string>
+    <string name="update_download_title">MoneyNote %1$s</string>
+    <string name="update_download_description">Đang tải bản cập nhật APK</string>
+    <string name="update_download_started">Đã bắt đầu tải bản cập nhật</string>
+    <string name="update_downloading">Đang tải APK cập nhật…</string>
+    <string name="update_install_prompt">Tải xong. Mở trình cài đặt để cập nhật ứng dụng.</string>
+    <string name="update_install_unavailable">Không mở được trình cài đặt hệ thống</string>
+    <string name="update_grant_install_permission">Hãy cho phép MoneyNote cài ứng dụng từ nguồn này, rồi quay lại app để tiếp tục cập nhật.</string>
+    <string name="update_download_failed">Tải bản cập nhật thất bại (%1$d)</string>
+    <string name="update_check_failed">Không kiểm tra được bản cập nhật</string>
 </resources>

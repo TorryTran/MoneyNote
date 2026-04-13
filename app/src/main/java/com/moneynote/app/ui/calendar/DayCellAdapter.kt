@@ -17,10 +17,26 @@ class DayCellAdapter(
     private var selectedDay: Int? = null
 
     fun submit(days: List<Int?>, summaries: Map<Int, DaySummary>, selectedDay: Int?) {
+        val oldDays = this.days
+        val oldSummaries = this.summaries
+        val oldSelectedDay = this.selectedDay
         this.days = days
         this.summaries = summaries
         this.selectedDay = selectedDay
-        notifyDataSetChanged()
+        if (oldDays.size != days.size) {
+            notifyDataSetChanged()
+            return
+        }
+        for (index in days.indices) {
+            val oldDay = oldDays[index]
+            val newDay = days[index]
+            val changed = oldDay != newDay ||
+                oldSummaries[oldDay] != summaries[newDay] ||
+                (oldSelectedDay == oldDay) != (selectedDay == newDay)
+            if (changed) {
+                notifyItemChanged(index)
+            }
+        }
     }
 
     fun selectDay(newSelectedDay: Int?) {

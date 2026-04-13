@@ -41,6 +41,16 @@ class CategoryAdapter(
         notifyItemChanged(index)
     }
 
+    fun setSelectedByName(name: String) {
+        val idx = categories.indexOfFirst { !it.isEditor && it.name == name }
+        val target = if (idx >= 0) idx else categories.indexOfFirst { !it.isEditor }.coerceAtLeast(0)
+        if (target == selectedIndex) return
+        val old = selectedIndex
+        selectedIndex = target
+        notifyItemChanged(old)
+        notifyItemChanged(selectedIndex)
+    }
+
     inner class CategoryVH(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CategoryItem, selected: Boolean) {
             binding.tvCategoryName.text = item.name

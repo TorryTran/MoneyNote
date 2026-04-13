@@ -20,6 +20,7 @@ object CategoryVisuals {
         "Tiền thưởng" to R.drawable.ic_cat_bonus,
         "Thu nhập khác" to R.drawable.ic_cat_other_income,
         "Đầu tư" to R.drawable.ic_cat_invest,
+        "Chuyển khoản nội bộ" to R.drawable.ic_wallet_tab,
         "Chỉnh sửa" to R.drawable.ic_cat_edit,
         "Sửa danh mục" to R.drawable.ic_cat_edit
     )

@@ -8,15 +8,15 @@ class TransactionRepository private constructor(context: Context) {
     private val db = MoneyNoteDatabase.getInstance(context)
 
     suspend fun add(transaction: TransactionEntity): Long = withContext(Dispatchers.IO) {
-        db.insert(transaction)
+        db.insert(transaction).also { DataChangeTracker.bumpTransactions() }
     }
 
     suspend fun update(transaction: TransactionEntity): Int = withContext(Dispatchers.IO) {
-        db.update(transaction)
+        db.update(transaction).also { DataChangeTracker.bumpTransactions() }
     }
 
     suspend fun delete(id: Long): Int = withContext(Dispatchers.IO) {
-        db.delete(id)
+        db.delete(id).also { DataChangeTracker.bumpTransactions() }
     }
 
     suspend fun getByDay(dayStart: Long, dayEnd: Long): List<TransactionEntity> =
@@ -40,6 +40,7 @@ class TransactionRepository private constructor(context: Context) {
 
     suspend fun replaceAll(items: List<TransactionEntity>) = withContext(Dispatchers.IO) {
         db.replaceAllTransactions(items)
+        DataChangeTracker.bumpTransactions()
     }
 
     companion object {

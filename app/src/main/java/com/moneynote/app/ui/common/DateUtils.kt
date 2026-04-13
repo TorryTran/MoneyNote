@@ -6,15 +6,13 @@ import java.util.Date
 import java.util.Locale
 
 object DateUtils {
-    private val fullDateFormat = SimpleDateFormat("dd/MM/yyyy (EEE)", Locale("vi", "VN"))
-    private val monthFormat = SimpleDateFormat("MM/yyyy", Locale("vi", "VN"))
-    private val timeFormat = SimpleDateFormat("HH:mm", Locale("vi", "VN"))
+    private val vietnameseLocale = Locale("vi", "VN")
 
-    fun formatDate(date: Long): String = fullDateFormat.format(Date(date))
+    fun formatDate(date: Long): String = formatter("dd/MM/yyyy (EEE)").format(Date(date))
 
-    fun formatMonth(date: Long): String = monthFormat.format(Date(date))
+    fun formatMonth(date: Long): String = formatter("MM/yyyy").format(Date(date))
 
-    fun formatTime(date: Long): String = timeFormat.format(Date(date))
+    fun formatTime(date: Long): String = formatter("HH:mm").format(Date(date))
 
     fun dayBounds(date: Long): Pair<Long, Long> {
         val cal = Calendar.getInstance()
@@ -100,5 +98,9 @@ object DateUtils {
         for (d in 1..daysInMonth) cells.add(d)
         while (cells.size % 7 != 0) cells.add(null)
         return cells
+    }
+
+    private fun formatter(pattern: String): SimpleDateFormat {
+        return SimpleDateFormat(pattern, vietnameseLocale)
     }
 }

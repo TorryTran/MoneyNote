@@ -17,21 +17,12 @@
 
         <TextView
             android:id="@+id/tvTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/title_entry"
             android:textColor="@color/accent_blue"
             android:textStyle="bold"
             android:textSize="30sp" />
-
-        <ImageButton
-            android:id="@+id/btnQuickCalendar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_edit"
-            android:tint="@color/accent_blue" />
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
@@ -39,8 +30,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_primary"
+        app:tabGravity="center"
         app:tabIndicatorColor="@color/accent_blue"
         app:tabIndicatorFullWidth="true"
+        app:tabMode="scrollable"
         app:tabSelectedTextColor="@color/accent_blue"
         app:tabTextColor="@color/text_secondary" />
 
