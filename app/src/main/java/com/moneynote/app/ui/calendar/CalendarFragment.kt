@@ -205,10 +205,17 @@ class CalendarFragment : Fragment(), TabRefreshable {
                 )
                 val oldDelta = if (tx.type == TransactionType.INCOME) tx.amount else -tx.amount
                 val newDelta = if (updated.type == TransactionType.INCOME) updated.amount else -updated.amount
-                val balanceMap = walletStore.load().associate { it.name to it.balance }.toMutableMap()
-                balanceMap[tx.wallet] = (balanceMap[tx.wallet] ?: 0L) - oldDelta
-                balanceMap[updated.wallet] = (balanceMap[updated.wallet] ?: 0L) + newDelta
-                if ((balanceMap[updated.wallet] ?: 0L) < 0L || (balanceMap[tx.wallet] ?: 0L) < 0L) {
+                val beforeBalances = walletStore.load().associate { it.name to it.balance }
+                val afterBalances = beforeBalances.toMutableMap()
+                afterBalances[tx.wallet] = (afterBalances[tx.wallet] ?: 0L) - oldDelta
+                afterBalances[updated.wallet] = (afterBalances[updated.wallet] ?: 0L) + newDelta
+                val touchedWallets = linkedSetOf(tx.wallet, updated.wallet)
+                val makesBalanceWorse = touchedWallets.any { walletName ->
+                    val before = beforeBalances[walletName] ?: 0L
+                    val after = afterBalances[walletName] ?: 0L
+                    after < 0L && after < before
+                }
+                if (makesBalanceWorse) {
                     vibrateWarning(requireContext())
                     Toast.makeText(requireContext(), getString(R.string.wallet_insufficient_balance), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
