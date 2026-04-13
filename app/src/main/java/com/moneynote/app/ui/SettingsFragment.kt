@@ -300,7 +300,7 @@ class SettingsFragment : Fragment(), TabRefreshable {
                 val obj = arr.getJSONObject(i)
                 list.add(
                     TransactionEntity(
-                        type = TransactionType.valueOf(obj.getString("type")),
+                        type = TransactionType.fromName(obj.optString("type")),
                         amount = obj.getLong("amount"),
                         wallet = obj.optString("wallet", getString(R.string.wallet_default_cash)),
                         transferToWallet = obj.optString("transferToWallet", ""),

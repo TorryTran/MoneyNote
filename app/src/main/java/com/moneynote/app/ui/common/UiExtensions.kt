@@ -1,6 +1,8 @@
 package com.moneynote.app.ui.common
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.VibrationEffect
@@ -21,6 +23,12 @@ fun parseColorOrDefault(color: String, fallback: Int): Int {
 }
 
 fun vibrateWarning(context: Context) {
+    val hasVibratePermission = ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.VIBRATE
+    ) == PackageManager.PERMISSION_GRANTED
+    if (!hasVibratePermission) return
+
     val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val manager = context.getSystemService(VibratorManager::class.java)
         manager?.defaultVibrator
@@ -31,11 +39,15 @@ fun vibrateWarning(context: Context) {
 
     if (!vibrator.hasVibrator()) return
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        vibrator.vibrate(VibrationEffect.createOneShot(120L, VibrationEffect.DEFAULT_AMPLITUDE))
-    } else {
-        @Suppress("DEPRECATION")
-        vibrator.vibrate(120L)
+    try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(120L, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(120L)
+        }
+    } catch (_: SecurityException) {
+        // Some OEM ROMs can still reject vibration at runtime; skip to avoid crash.
     }
 }
 

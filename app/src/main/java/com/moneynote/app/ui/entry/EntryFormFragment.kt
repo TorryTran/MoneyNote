@@ -48,8 +48,8 @@ class EntryFormFragment : Fragment(), TabRefreshable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val raw = requireArguments().getString(ARG_TYPE) ?: TransactionType.EXPENSE.name
-        type = TransactionType.valueOf(raw)
+        val raw = requireArguments().getString(ARG_TYPE)
+        type = TransactionType.fromName(raw)
     }
 
     override fun onCreateView(

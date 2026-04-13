@@ -126,7 +126,9 @@ class MoneyNoteDatabase private constructor(context: Context) :
                 result.add(
                     TransactionEntity(
                         id = it.getLong(it.getColumnIndexOrThrow("id")),
-                        type = TransactionType.valueOf(it.getString(it.getColumnIndexOrThrow("type"))),
+                        type = TransactionType.fromName(
+                            it.getString(it.getColumnIndexOrThrow("type"))
+                        ),
                         amount = it.getLong(it.getColumnIndexOrThrow("amount")),
                         wallet = it.getString(it.getColumnIndexOrThrow("wallet")) ?: "Tiền mặt",
                         transferToWallet = it.getString(it.getColumnIndexOrThrow("transferToWallet")) ?: "",
@@ -192,7 +194,9 @@ class MoneyNoteDatabase private constructor(context: Context) :
                 result.add(
                     TransactionEntity(
                         id = it.getLong(it.getColumnIndexOrThrow("id")),
-                        type = TransactionType.valueOf(it.getString(it.getColumnIndexOrThrow("type"))),
+                        type = TransactionType.fromName(
+                            it.getString(it.getColumnIndexOrThrow("type"))
+                        ),
                         amount = it.getLong(it.getColumnIndexOrThrow("amount")),
                         wallet = it.getString(it.getColumnIndexOrThrow("wallet")) ?: "Tiền mặt",
                         transferToWallet = it.getString(it.getColumnIndexOrThrow("transferToWallet")) ?: "",
