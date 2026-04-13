@@ -355,12 +355,6 @@ class WalletFragment : Fragment(), TabRefreshable {
                 Toast.makeText(requireContext(), getString(R.string.transfer_same_wallet_error), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val balances = walletsSnapshot.associate { it.name to it.balance }
-            if ((balances[fromWallet] ?: 0L) < amount) {
-                Toast.makeText(requireContext(), getString(R.string.wallet_insufficient_balance), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
             val note = dialogBinding.etNote.text?.toString()?.trim().orEmpty()
             val transferTx = TransactionEntity(
                 type = TransactionType.EXPENSE,
